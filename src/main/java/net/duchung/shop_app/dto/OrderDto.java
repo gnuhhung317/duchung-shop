@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -33,6 +35,9 @@ public class OrderDto {
     private String shippingMethod;
 
     private String shippingAddress;
+    private Date shippingDate;
+    private String trackingNumber;
+
 
     private String paymentMethod;
 
