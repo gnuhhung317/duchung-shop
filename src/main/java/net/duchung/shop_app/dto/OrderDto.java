@@ -14,6 +14,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDto {
+
+    private Long id;
     @Min(value = 1, message = "User's ID must be > 0")
     private Long userId;
 
@@ -36,7 +38,7 @@ public class OrderDto {
 
     private String shippingAddress;
     private Date shippingDate;
-    private String trackingNumber;
+//    private String trackingNumber;
 
 
     private String paymentMethod;

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -51,16 +52,35 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto updateOrder(Long id, OrderDto orderDto) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Order with id "+id+" not found"));
 
+        order.setFullName(orderDto.getFullName());
+        order.setAddress(orderDto.getAddress());
+        order.setPhoneNumber(orderDto.getPhoneNumber());
+        order.setEmail(orderDto.getEmail());
+        order.setNote(orderDto.getNote());
+        order.setTotalMoney(orderDto.getTotalMoney());
+        order.setShippingDate(orderDto.getShippingDate());
+        order.setShippingMethod(orderDto.getShippingMethod());
+        order.setShippingAddress(orderDto.getShippingAddress());
+        order.setPaymentMethod(orderDto.getPaymentMethod());
         return toDto(orderRepository.save(order));
     }
 
     @Override
     public void deleteOrder(Long id) {
 
+        Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Order with id "+id+" not found"));
+        order.setActive(false);
     }
+
+    @Override
+    public void activeOrder(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Order with id "+id+" not found"));
+        order.setActive(true);
+    }
+
     public OrderDto toDto(Order order) {
         OrderDto orderDto = new OrderDto();
-
+        orderDto.setId(order.getId());
         orderDto.setUserId(order.getUser().getId());
         orderDto.setFullName(order.getFullName());
         orderDto.setAddress(order.getAddress());
@@ -83,9 +103,9 @@ public class OrderServiceImpl implements OrderService {
         order.setEmail(orderDto.getEmail());
         order.setNote(orderDto.getNote());
         order.setTotalMoney(orderDto.getTotalMoney());
+        order.setShippingDate(orderDto.getShippingDate());
         order.setShippingMethod(orderDto.getShippingMethod());
         order.setShippingAddress(orderDto.getShippingAddress());
-        order.setTrackingNumber(orderDto.getTrackingNumber());
         order.setPaymentMethod(orderDto.getPaymentMethod());
         return order;
     }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -36,8 +38,15 @@ public class UserServiceImpl implements UserService {
     public String login(String phoneNumber, String password) {
         return null;
     }
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream().map(this::toDto).toList();
+    }
+
     public UserDto toDto(User user) {
         UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
         userDto.setFullName(user.getFullName());
         userDto.setAddress(user.getAddress());
         userDto.setPhoneNumber(user.getPhoneNumber());

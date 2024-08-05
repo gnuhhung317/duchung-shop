@@ -37,5 +37,8 @@ public class UserController {
     public ResponseEntity<String> login(@RequestParam String phoneNumber, @RequestParam String password) {
         return ResponseEntity.ok(userService.login(phoneNumber, password));
     }
-
+    @GetMapping("")
+    public ResponseEntity<List<UserDto>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 }
