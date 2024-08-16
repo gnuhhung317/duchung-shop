@@ -12,6 +12,7 @@ import net.duchung.shop_app.service.OrderService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
     private UserRepository userRepository;
     @Override
+    @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
         User user = userRepository.findById(orderDto.getUserId()).orElseThrow(() -> new DataNotFoundException("User with id "+orderDto.getUserId()+"not found"));
         Order order = toEntity(orderDto);
@@ -49,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDto updateOrder(Long id, OrderDto orderDto) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Order with id "+id+" not found"));
 
@@ -66,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void deleteOrder(Long id) {
 
         Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Order with id "+id+" not found"));

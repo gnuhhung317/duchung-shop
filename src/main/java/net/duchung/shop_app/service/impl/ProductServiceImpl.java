@@ -1,5 +1,6 @@
 package net.duchung.shop_app.service.impl;
 
+import net.duchung.shop_app.dto.CategoryDto;
 import net.duchung.shop_app.dto.ProductDto;
 import net.duchung.shop_app.dto.ProductImageDto;
 import net.duchung.shop_app.entity.Category;
@@ -15,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,8 +28,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private  ProductImageRepository productImageRepository;
     @Override
+    @Transactional
     public ProductDto createProduct(ProductDto productDTO)  {
-        Category category=categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
+        Category category=categoryRepository.findById(productDTO.getCategory().getId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
         Product product = toEntity(productDTO);
         product.setCategory(category);
         productRepository.save(product);
@@ -40,14 +43,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductDto> getAllProducts(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest).map(this::toDto);
+    public Page<ProductDto> getAllProducts(String keyword, Long categoryId,PageRequest pageRequest) {
+
+        return productRepository.searchProducts(keyword,categoryId,pageRequest).map(this::toDto);
     }
 
     @Override
+    @Transactional
     public ProductDto updateProduct(long id, ProductDto productDTO)  {
         Product product = productRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"));
-        Category category=categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
+        Category category=categoryRepository.findById(productDTO.getCategory().getId()).orElseThrow(() -> new DataNotFoundException("Category not found"));
         product.setCategory(category);
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
@@ -58,6 +63,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(long id) {
         productRepository.deleteById(id);
     }
@@ -68,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductImageDto createProductImage(Long productId, ProductImageDto productImageDTO)  {
         int quantity = productImageRepository.countByProductId(productId);
         if (quantity >= ProductImage.MAX_IMAGES_QUANTITY) {
@@ -82,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
     }
     public ProductDto toDto(Product product) {
         ProductDto productDto = new ProductDto();
-        productDto.setCategoryId(product.getCategory().getId());
+        productDto.setCategory( new CategoryDto(product.getCategory().getId(), product.getCategory().getName()));
         productDto.setDescription(product.getDescription());
         productDto.setPrice(product.getPrice());
         productDto.setThumbnail(product.getThumbnail());
@@ -92,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
 
     public Product toEntity(ProductDto productDto) {
         Product product = new Product();
-        Category category = categoryRepository.findById(productDto.getCategoryId()).orElseThrow(() -> new DataIntegrityViolationException("Category not found"));
+        Category category = categoryRepository.findById(productDto.getCategory().getId()).orElseThrow(() -> new DataIntegrityViolationException("Category not found"));
         product.setCategory(category);
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());

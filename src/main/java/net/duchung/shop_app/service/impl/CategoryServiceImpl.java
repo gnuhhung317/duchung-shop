@@ -6,6 +6,7 @@ import net.duchung.shop_app.repository.CategoryRepository;
 import net.duchung.shop_app.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,11 +16,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
     @Override
+    @Transactional
     public CategoryDto createCategory(CategoryDto category) {
         return toDto(categoryRepository.save(toEntity(category)));
     }
 
     @Override
+    @Transactional
+
     public CategoryDto getCategoryById(long id) {
 
         return toDto(categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found")));
@@ -31,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
         category.setName(categoryDto.getName());
@@ -39,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(long id) {
         categoryRepository.deleteById(id);
     }

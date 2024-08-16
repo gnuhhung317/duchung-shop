@@ -1,13 +1,17 @@
 package net.duchung.shop_app.service.impl;
 
+import net.duchung.shop_app.exception.ImageNotFoundException;
 import net.duchung.shop_app.exception.SizeLimitExceededException;
 import net.duchung.shop_app.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +22,25 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
     @Value("${file.upload-dir}")
     private String uploadDir;
+
     @Override
+    public UrlResource getProductImage(String fileName)  {
+
+        try {
+            Path path = Paths.get(uploadDir, fileName);
+            UrlResource resource = new UrlResource(path.toUri());
+
+            if(resource.exists()){
+                return resource;
+            }
+            throw new ImageNotFoundException(fileName+" not found");
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
     public String uploadProductImage(MultipartFile file)   {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -60,6 +82,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    @Transactional
     public List<String> uploadProductImages(List<MultipartFile> files) {
         List<String> fileNames = new LinkedList<>();
         int cnt=0;

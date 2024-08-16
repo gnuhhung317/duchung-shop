@@ -3,13 +3,16 @@ package net.duchung.shop_app.controller;
 import jakarta.validation.Valid;
 import net.duchung.shop_app.dto.ProductDto;
 import net.duchung.shop_app.dto.ProductImageDto;
+import net.duchung.shop_app.entity.Product;
 import net.duchung.shop_app.response.ListProductResponse;
 import net.duchung.shop_app.service.FileService;
 import net.duchung.shop_app.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +45,18 @@ public class ProductController {
         return ResponseEntity.ok(productImageDtos);
     }
     @GetMapping("")
-    public ResponseEntity<?> getAllProducts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int limit) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(new ListProductResponse(productService.getAllProducts(pageRequest).getContent(), productService.getAllProducts(pageRequest).getTotalElements()));
+    public ResponseEntity<?> getAllProducts(@RequestParam(defaultValue = "-1") Long categoryId,
+                                            @RequestParam(defaultValue = "") String keyword,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int limit) {
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("created_at").descending());
+        Page<ProductDto> pageProducts = productService.getAllProducts(keyword,categoryId,pageRequest);
+        return ResponseEntity.ok(new ListProductResponse(pageProducts.getContent(), (long) pageProducts.getTotalPages()));
+    }
+
+    @GetMapping("/images/{fileName}")
+    public ResponseEntity<?> getProductImage(@PathVariable String fileName) {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileService.getProductImage(fileName));
     }
 
 }

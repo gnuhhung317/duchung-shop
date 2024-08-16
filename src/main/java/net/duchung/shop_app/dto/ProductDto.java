@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.duchung.shop_app.entity.Category;
 
 @Getter
 @Setter
@@ -25,5 +26,5 @@ public class ProductDto {
 
     private String description;
 
-    private Long categoryId;
+    private CategoryDto category;
 }

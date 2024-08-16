@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     UserDto createUser(UserDto userDto) throws DataNotFoundException;
 
-    String login(String phoneNumber, String password);
+    String login(String phoneNumber, String password,Long roleId);
 
     List<UserDto> getAllUsers();
 }

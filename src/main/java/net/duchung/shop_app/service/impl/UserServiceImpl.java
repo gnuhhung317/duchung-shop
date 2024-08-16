@@ -40,19 +40,21 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByPhoneNumber(phoneNumber)){
             throw new DataIntegrityViolationException("Phone number already exists");
         }
+        userDto.setRoleId(2L); //default role is user
         User user = toEntity(userDto);
         if(user.getFacebookAccountId()==0&&user.getGoogleAccountId()==0){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
         User savedUser = userRepository.save(user);
         return toDto(savedUser);
     }
 
     @Override
-    public String login(String phoneNumber, String password) {
+    public String login(String phoneNumber, String password,Long roleId) {
         User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new DataNotFoundException("Invalid phone number or password"));
         if(user.getFacebookAccountId()==0&&user.getGoogleAccountId()==0){
-            if(!passwordEncoder.matches(password, user.getPassword())){
+            if(!passwordEncoder.matches(password, user.getPassword())||user.getRole().getId()!=roleId){
                 throw new BadCredentialsException("Invalid phone number or password");
             }
         }

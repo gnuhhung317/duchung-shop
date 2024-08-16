@@ -12,7 +12,7 @@ public interface ProductService {
     // Define your service methods here
     ProductDto createProduct(ProductDto productDTO) ;
     ProductDto getProductById(long id) throws Exception;
-    Page<ProductDto> getAllProducts(PageRequest pageRequest);
+    Page<ProductDto> getAllProducts(String keyword,Long categoryId,PageRequest pageRequest);
     ProductDto updateProduct(long id, ProductDto productDTO) ;
     void deleteProduct(long id);
     boolean existsByName(String name);

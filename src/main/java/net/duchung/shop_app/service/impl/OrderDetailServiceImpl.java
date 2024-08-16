@@ -11,6 +11,7 @@ import net.duchung.shop_app.repository.ProductRepository;
 import net.duchung.shop_app.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
@@ -22,6 +23,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     private ProductRepository productRepository;
     @Override
+    @Transactional
     public OrderDetailDto createOrderDetail(OrderDetailDto orderDetailDto) {
         Order order = orderRepository.findById(orderDetailDto.getOrderId()).orElseThrow(() -> new DataNotFoundException("Order with id "+orderDetailDto.getOrderId()+" not found"));
 
@@ -36,6 +38,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
+    @Transactional
     public OrderDetailDto updateOrderDetail(Long id, OrderDetailDto orderDetailDto) {
         OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(() -> new DataNotFoundException("OrderDetail with id "+id+" not found"));
         Order order = orderRepository.findById(orderDetailDto.getOrderId()).orElseThrow(() -> new DataNotFoundException("Order with id "+ id+" not found"));
@@ -50,6 +53,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
+    @Transactional
     public void deleteOrderDetail(Long id) {
 
         OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(() -> new DataNotFoundException("OrderDetail with id "+id+" not found"));
